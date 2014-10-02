@@ -277,8 +277,8 @@ private str templateTestCase(TestSuite testSuite, TestCase testCase){
 		'	<if(!isEmpty(testCase.returnVariables) && ReturnValues() in testSuite.oracleStrategies){>
 		'	<for(Variable v <- testCase.returnVariables){> 
 		'	CuAssertTrue(tc, <v.identifier> == /* Add expected value here */);<}><}>
-		'	<if(StateVariables() in testSuite.oracleStrategies){> <for(Variable variable <- testCase.stateVariables){>
-		'	<variableDeclaration(testSuite, testCase.formula, variable.identifier, [])>Expected; // Add expected value here.
+		'	<if(StateVariables() in testSuite.oracleStrategies){> <for(Variable variable <- testCase.expectedStateValues){>
+		'	<variableDeclaration(testSuite, testCase.formula, variable.identifier, [])>Expected<if(testCase.negative){>; // Add expected value here.<} else {> = <variableAttribution(testSuite, testCase.formula, variable.identifier, variable.values)>;<}>
 		'	CuAssertTrue(tc, <toLowerCase(testSuite.machineName)>.<variable.identifier> == <variable.identifier>Expected);			
 		'	<}> <}>
 		'	<if(StateInvariant() in testSuite.oracleStrategies && hasCheckInvariant(testSuite)){>check_invariant(tc, <toLowerCase(testSuite.machineName)>);<}>

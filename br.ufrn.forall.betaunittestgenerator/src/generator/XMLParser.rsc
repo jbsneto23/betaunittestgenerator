@@ -118,6 +118,7 @@ public TestSuite testSuiteFromXML(str xml){
 				list[Variable] stateVariables = [];
 				list[Parameter] operationParameters = []; 
 				list[Variable] returnVariables = [];
+				list[Variable] expectedStateValues = [];
 				
 				// variables that will receive the variables or parameters data
 				str identifier = "";
@@ -190,6 +191,31 @@ public TestSuite testSuiteFromXML(str xml){
 									operationParameters = operationParameters + Parameter(identifier, values);
 								}
 							}
+							// extract the content information of expected-state-values tag
+							case element(none(),"expected-state-values", sv) : {
+								// iterating in the state-variables tag's children (state variables) 
+								for(Node v <- sv){
+									values = []; // clean the values list
+									// iterating in the variable tag's children (state variable contents) 
+									for(Node va <- v.children){
+										switch(va){
+											// extract the content information of identifier tag
+											case element(none(),"identifier",[charData(identf)]) : identifier = identf;
+											// extract the content information of values tag
+											case element(none(),"values", vls) : {
+												// iterating in the values tag's children (values)
+												for(Node vl <- vls){
+													// extract the content information of value tag and add to the values list
+													if(!isEmpty(vl.children))
+														values = values + head(vl.children).text;
+												}
+											} 
+										}
+									}
+									// instantiate and add a Variable to the state variables list
+									expectedStateValues = expectedStateValues + Variable(identifier, values);
+								}
+							}
 							// extract the content information of return-variables tag
 							case element(none(),"return-variables", rv) : {
 								// iterating in the return-variables tag's children (return variables)
@@ -218,11 +244,12 @@ public TestSuite testSuiteFromXML(str xml){
 						}
 					}
 					// instantiate and add a TestCase to the test cases list
-					testCases = testCases + TestCase(id, formula, negative, stateVariables, operationParameters, returnVariables);
+					testCases = testCases + TestCase(id, formula, negative, stateVariables, operationParameters, returnVariables, expectedStateValues);
 					// clean the variables and parameters lists
 					stateVariables = [];
 					operationParameters = []; 
 					returnVariables = [];
+					expectedStateValues = [];
 				}
 			}
 		}

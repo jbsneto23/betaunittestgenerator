@@ -299,8 +299,8 @@ private str templateTestCase(TestSuite testSuite, TestCase testCase){
 		'	assertEquals(<operationCall(toLowerCase(testSuite.machineName), testSuite.operationUnderTest, testCase.operationParameters)>, /* Add expected value here */);
 		'	<} else {>
 		'	<operationCall(toLowerCase(testSuite.machineName), testSuite.operationUnderTest, testCase.operationParameters)>;
-		'	<}> <if(StateVariables() in testSuite.oracleStrategies){> <for(Variable variable <- testCase.stateVariables){>
-		'	<variableDeclaration(testSuite, testCase.formula, variable.identifier, [])>Expected; // Add expected value here.
+		'	<}> <if(StateVariables() in testSuite.oracleStrategies){> <for(Variable variable <- testCase.expectedStateValues){>
+		'	<variableDeclaration(testSuite, testCase.formula, variable.identifier, [])>Expected<if(testCase.negative){>; // Add expected value here.<} else {> = <variableAttribution(testSuite, testCase.formula, variable.identifier, variable.values)>;<}>
 		'	assertEquals(<getCall(toLowerCase(testSuite.machineName), variable.identifier)>, <variable.identifier>Expected);			
 		'	<}> <}>
 		'}
